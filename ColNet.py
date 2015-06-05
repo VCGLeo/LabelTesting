@@ -18,6 +18,9 @@ class ColNet:
     def addNode(self, col):
         self.nodeCols.append(col)
 
+    def insertNode(self, col, index):
+        self.nodeCols.insert(index, col)
+
     def addEdge(self, source, target, col):
         self.edgeCols.append(col)
         self.edgeCols.append((source,target))
