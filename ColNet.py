@@ -23,7 +23,7 @@ class ColNet:
 
     def addEdge(self, source, target, col):
         self.edgeCols.append(col)
-        self.edgeCols.append((source,target))
+        self.edges.append((source,target))
 
     #Returns this network in .col format
     def __str__(self):
@@ -32,8 +32,8 @@ class ColNet:
         result = "p edge " + str(len(nodes)) + " " + str(len(edges))
         for i in xrange(1, len(nodes)+1):
             if nodes[i-1] > 0:
-                result +=  "\n v " + i + " " + nodes[i-1]
+                result +=  "\n v " + str(i) + " " + str(nodes[i-1])
         for i in xrange(1, len(edges)+1):
-            result +=  "\n e " + edges[i-1][0] + " " + edges[i-1][1]
+            result +=  "\n e " + str(edges[i-1][0]) + " " + str(edges[i-1][1])
 
-        return rep
+        return result

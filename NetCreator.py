@@ -15,7 +15,43 @@ class NetCreator:
     #
     # @return The ColNet object constructed
     ###
-    def createPath(self):
+    def createPath(self, size, edgeCols):
+        
+        net = ColNet()
+        
+
+        return net
+
+    ###
+    # Creates a cycle shaped colored node and edge network
+    #
+    # @return The ColNet object constructed
+    ###
+    def createCycle(self, size, edgeCols):
+        
+        net = ColNet()
+        
+
+        return net
+
+    ###
+    # Creates a star shaped colored node and edge network
+    #
+    # @return The ColNet object constructed
+    ###
+    def createStar(self, size, edgeCols):
+        
+        net = ColNet()
+        
+
+        return net
+
+    ###
+    # Creates a path-star shaped colored node and edge network
+    #
+    # @return The ColNet object constructed
+    ###
+    def createPathStar(self, size, edgeCols):
         
         net = ColNet()
         
