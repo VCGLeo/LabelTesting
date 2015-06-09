@@ -5,7 +5,7 @@
 # Class representing a colored node and edge network
 ###
 import collections
-from copy import deepcopy
+import copy
 
 class ColNet:
     def __init__(self):

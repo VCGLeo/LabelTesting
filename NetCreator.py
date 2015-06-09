@@ -4,7 +4,7 @@
 #
 # Creator colored node and edge network for path shaped queries
 ###
-from math import sqrt
+import math
 from ColNet import ColNet
 
 class NetCreator:
