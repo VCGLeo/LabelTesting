@@ -30,7 +30,7 @@ def run(argv):
     for opt, arg in opts:
 
         # Specify network type
-        elif opt in ['-n', '--network']:
+        if opt in ['-n', '--network']:
             # Make sure it's a recognized strategy
             if arg.lower() in netTypes:
                 netType = arg
@@ -38,16 +38,16 @@ def run(argv):
                 print "Unrecognized network type %s, defaulting to path network" % arg
 
         # Specify maximum network size in nodes
-        if opt in ['-x', '--maxSize']:
-            maxSize = arg
+        elif opt in ['-x', '--maxSize']:
+            maxSize = int(arg)
 
         # Specify minimum network size in nodes
-        if opt in ['-s', '--minSize']:
-            minSize = arg
+        elif opt in ['-s', '--minSize']:
+            minSize = int(arg)
 
         # Specify number of edge colors
-        if opt in ['-c', '--edgeCols']:
-            edgeCols = arg
+        elif opt in ['-c', '--edgeCols']:
+            edgeCols = int(arg)
 
         # Print help
         elif opt in ["-h", "--help"]:
@@ -68,29 +68,29 @@ def run(argv):
 
     testLabeling(netType, minSize, maxSize, edgeCols, outputFile, colFolder)
 
-def testLabeling(self, netType, minSize, maxSize, edgeCols, outputFile, colFolder):
+def testLabeling(netType, minSize, maxSize, edgeCols, outputFile, colFolder):
     creator = NetCreator()
     nets = []
 
-    if netType == "path" || netType == "all":
+    if netType == "path" or netType == "all":
         for i in xrange(minSize, maxSize + 1):
             e = edgeCols
             if e >= i:
                 e = i-1
             nets.append(("path" + str(i) + "_" + str(e), creator.createPath(i, e)))
-    elif netType == "cycle" || netType == "all":
+    elif netType == "cycle" or netType == "all":
         for i in xrange(minSize, maxSize + 1):
             e = edgeCols
             if e > i:
                 e = i
             nets.append(("cycle" + str(i) + "_" + str(e), creator.createCycle(i, e)))
-    elif netType == "star" || netType == "all":
+    elif netType == "star" or netType == "all":
         for i in xrange(minSize, maxSize + 1):
             e = edgeCols
             if e >= i:
                 e = i-1
             nets.append(("star" + str(i) + "_" + str(e), creator.createStar(i, e)))
-#    elif netType == "path-star" || netType == "all":
+#    elif netType == "path-star" or netType == "all":
 #        for i in xrange(minSize, maxSize + 1):
 #            e = edgeCols
 #            if e >= i:
@@ -98,6 +98,9 @@ def testLabeling(self, netType, minSize, maxSize, edgeCols, outputFile, colFolde
 #            nets.append(("path-star" + str(i) + "_" + str(e), creator.createPathStar(i, e)))
 
     s = ""
+    if not os.path.exists(colFolder):
+        os.makedirs(colFolder)
+        
     for n in nets:
         s1 = "Transforming " + str(n[0])
         print s1
@@ -106,7 +109,7 @@ def testLabeling(self, netType, minSize, maxSize, edgeCols, outputFile, colFolde
         s2 = "Outputting " + str(n[0]) + " to .col file"
         print s2
         f = open(colFolder + n[0] + ".col", "w")
-        f.write(n[1])
+        f.write(str(n[1]))
         f.close()
 
         s3 = "Running Bliss on " + str(n[0])
