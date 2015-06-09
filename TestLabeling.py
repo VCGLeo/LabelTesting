@@ -14,14 +14,17 @@ def run(argv):
     netType = "path"                          # Network Type to actually use
     minSize = 0
     maxSize = 0
-    edgeCols = 1
-    outputFile = None                         # File to write output to
+    minNodeCols = 1
+    maxNodeCols = 0
+    minEdgeCols = 1                            
+    maxEdgeCols = 0                            # Note that the paper states needing a maximum of 6 edge colors
+    outputFile = "log"                         # File to write output to
     colFolder = "colFiles/"                         # File to write output to
 
 
     # Parse command line options
     try:
-        opts, args = getopt.getopt(argv, "hvg:s:o:", ["help", "version", "network=", "maxSize=", "minSize=", "edgeCols="])
+        opts, args = getopt.getopt(argv, "hvn:s:x:v:y:e:z:", ["help", "version", "network=", "minSize=", "maxSize=", "minNodeCols=", "maxNodeCols=", "minEdgeCols=", "maxEdgeCols="])
     except getopt.GetoptError:
         print "Incorrect arguments/options."
         printOptions()
@@ -31,22 +34,33 @@ def run(argv):
 
         # Specify network type
         if opt in ['-n', '--network']:
-            # Make sure it's a recognized strategy
             if arg.lower() in netTypes:
                 netType = arg
             else:
                 print "Unrecognized network type %s, defaulting to path network" % arg
 
-        # Specify maximum network size in nodes
-        elif opt in ['-x', '--maxSize']:
-            maxSize = int(arg)
-
         # Specify minimum network size in nodes
         elif opt in ['-s', '--minSize']:
             minSize = int(arg)
 
+        # Specify maximum network size in nodes
+        elif opt in ['-x', '--maxSize']:
+            maxSize = int(arg)
+
         # Specify number of edge colors
-        elif opt in ['-c', '--edgeCols']:
+        elif opt in ['-v', '--minNodeCols']:
+            edgeCols = int(arg)
+
+        # Specify number of edge colors
+        elif opt in ['-y', '--maxNodeCols']:
+            edgeCols = int(arg)
+
+        # Specify number of edge colors
+        elif opt in ['-e', '--minEdgeCols']:
+            edgeCols = int(arg)
+
+        # Specify number of edge colors
+        elif opt in ['-z', '--maxEdgeCols']:
             edgeCols = int(arg)
 
         # Print help
@@ -62,45 +76,39 @@ def run(argv):
     if maxSize < minSize:
         maxSize = minSize
 
+    if maxNodeCols < minNodeCols:
+        maxNodeCols = minNodeCols
+
+    if maxEdgeCols < minEdgeCols:
+        maxEdgeCols = minEdgeCols
+
     if minSize == 0:
         print "Error: no size specified"
         sys.exit(2)
 
-    testLabeling(netType, minSize, maxSize, edgeCols, outputFile, colFolder)
+#Start doing stuff
 
-def testLabeling(netType, minSize, maxSize, edgeCols, outputFile, colFolder):
     creator = NetCreator()
     nets = []
 
-    if netType == "path" or netType == "all":
-        for i in xrange(minSize, maxSize + 1):
-            e = edgeCols
-            if e >= i:
-                e = i-1
-            nets.append(("path" + str(i) + "_" + str(e), creator.createPath(i, e)))
-    elif netType == "cycle" or netType == "all":
-        for i in xrange(minSize, maxSize + 1):
-            e = edgeCols
-            if e > i:
-                e = i
-            nets.append(("cycle" + str(i) + "_" + str(e), creator.createCycle(i, e)))
-    elif netType == "star" or netType == "all":
-        for i in xrange(minSize, maxSize + 1):
-            e = edgeCols
-            if e >= i:
-                e = i-1
-            nets.append(("star" + str(i) + "_" + str(e), creator.createStar(i, e)))
-#    elif netType == "path-star" or netType == "all":
-#        for i in xrange(minSize, maxSize + 1):
-#            e = edgeCols
-#            if e >= i:
-#                e = i-1
-#            nets.append(("path-star" + str(i) + "_" + str(e), creator.createPathStar(i, e)))
+
+    for i in xrange(minSize, maxSize + 1):
+        for n in xrange(minNodeCols, maxNodeCols + 1):
+            for e in xrange(minEdgeCols, maxEdgeCols + 1):
+                suffix = str(i) + "_" + str(n) + "_" + str(e)
+                if netType == "path" or netType == "all":
+                    nets.append(("path" + suffix, creator.createPath(i, n, e)))
+                if netType == "cycle" or netType == "all":
+                    nets.append(("cycle" + suffix, creator.createCycle(i, n, e)))
+                if netType == "star" or netType == "all":
+                    nets.append(("star" + suffix, creator.createStar(i, n, e)))
+                if netType == "path-star" or netType == "all":
+                    nets.append(("path-star" + suffix, creator.createPathStar(i, n, e)))
 
     s = ""
     if not os.path.exists(colFolder):
         os.makedirs(colFolder)
-        
+
     for n in nets:
         s1 = "Transforming " + str(n[0])
         print s1
@@ -131,7 +139,14 @@ def testLabeling(netType, minSize, maxSize, edgeCols, outputFile, colFolder):
 
 def printOptions():
     print "Available options:"
-    print "check code"
+    print "-n specify a network type: path, cycle, star, path-star, all"
+    print "-s minimum number of nodes"
+    print "-x maximum number of nodes, specify if range is desired"
+    print "-v minimum number of node colors"
+    print "-y maximum number of node colors, specify if range is desired"
+    print "-e minimum number of edge colors"
+    print "-z maximum number of edge colors, specify if range is desired"
+    print "Files are generated for all combinations in the minimum-maximum ranges"
 
 # Only execute if not loaded as module!
 if __name__ == '__main__':
